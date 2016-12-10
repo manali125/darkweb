@@ -1,0 +1,2686 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false" 
+           type="text/javascript"></script>
+  <style>
+  body {
+      position: relative; 
+  }
+  .affix {
+      top:0;
+      width: 100%;
+      z-index: 9999 !important;
+  }
+  .navbar {
+      margin-bottom: 0px;
+  }
+
+  .affix ~ .container-fluid {
+     position: relative;
+     top: 50px;
+  }
+  #section1 {padding-top:50px;height:500px;color: #fff; background-color: #A9A9A9;}
+
+  #section41 {padding-top:50px;height:700px;color: #fff; background-color: #696969;}
+  #section42 {padding-top:50px;height:700px;color: #fff; background-color: #A9A9A9;}
+  #section43 {padding-top:50px;height:700px;color: #fff; background-color: #696969;}
+  #section51 {padding-top:50px;height:700px;color: #fff; background-color: #D3D3D3;}
+  #section52 {padding-top:50px;height:700px;color: #fff; background-color: #696969;}
+  #section53 {padding-top:50px;height:700px;color: #fff; background-color: #D3D3D3;}
+  #section54 {padding-top:50px;height:700px;color: #fff; background-color: #696969;}
+  #section55 {padding-top:50px;height:700px;color: #fff; background-color: #D3D3D3;}
+  #section56 {padding-top:50px;height:700px;color: #fff; background-color: #696969;}
+
+  </style>
+</head>
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+
+<div class="container-fluid" style="background-color:white;color:black;height:200px;">
+  <h1>Cloud Computing Final Project</h1>
+  <h3>Searching for geostats in Dark Net Markets</h3>
+  <p>This includes date in the form of markets. </p>
+  <p>The markets are divided into sections of SilkRoad2, DNStats and Grams which graphically represnts the data.</p>
+</div>
+
+<nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="197">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Markets</a>
+    </div>
+    <div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li><a href="#section1">SilkRoad2</a></li>
+        
+          <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">DNStats <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#section41">DNStats-1</a></li>
+              <li><a href="#section42">DNStats-2</a></li>
+              <li><a href="#section43">DNStats-3</a></li>
+            </ul>
+          </li>
+           <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Grams <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#section51">Grams-1</a></li>
+              <li><a href="#section52">Grams-2</a></li>
+              <li><a href="#section53">Grams-3</a></li>
+              <li><a href="#section54">Grams-4</a></li>
+              <li><a href="#section55">Grams-5</a></li>
+              <li><a href="#section56">Grams-6</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>    
+
+<div id="section1" class="container-fluid">
+  <h1>SilkRoad2</h1>
+ <div id="map" style="width: 400px; height: 300px"></div> 
+
+   <script type="text/javascript"> 
+      var map = new GMap2(document.getElementById("map"));
+      map.setCenter(new GLatLng(20.5937, 78.9629), 5);
+   </script>
+</div>
+<div id="section41" class="container-fluid">
+  <h1>DNStats-1</h1>
+   <canvas id="info" width="50" height="25" style="width:50%"></canvas>
+   <script>
+Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section42" class="container-fluid">
+  <h1>DNStats-2</h1>
+   <canvas id="info8" width="400" height="300" style="width:50%"></canvas>
+   <script>
+   Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info8").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section43" class="container-fluid">
+  <h1>DNStats-3</h1>
+ <canvas id="info7" width="400" height="300" style="width:50%"></canvas>
+ <script>
+Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info7").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section51" class="container-fluid">
+  <h1>Grams-1</h1>
+ <canvas id="info6" width="400" height="300" style="width:50%"></canvas>
+ <script>
+Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info6").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section52" class="container-fluid">
+  <h1>Grams-2</h1>
+   <canvas id="info5" width="400" height="300" style="width:50%"></canvas>
+   <script>
+Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info5").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section53" class="container-fluid">
+  <h1>Grams-3</h1>
+ <canvas id="info4" width="400" height="300" style="width:50%"></canvas>
+ <script>
+ Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info4").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section54" class="container-fluid">
+  <h1>Grams-4</h1>
+ <canvas id="info3" width="400" height="300" style="width:50%"></canvas>
+ <script>
+Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info3").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section55" class="container-fluid">
+  <h1>Grams-5</h1>
+ <canvas id="info2" width="400" height="300" style="width:50%"></canvas>
+ <script>
+ Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info2").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+<div id="section56" class="container-fluid">
+  <h1>Grams-6</h1>
+ <canvas id="info1" width="400" height="300" style="width:50%"></canvas>
+ <script>
+  Chart.types.Line.extend({
+
+    name: "LineTooltip",
+    /*
+     * we have to add one item in the init so need to rewrite it again here with the one edit
+     */
+    initialize: function (data) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        //Declare the extension of the default point, to cater for the options passed in to the constructor
+        this.PointClass = Chart.Point.extend({
+            strokeWidth: this.options.pointDotStrokeWidth,
+            radius: this.options.pointDotRadius,
+            display: this.options.pointDot,
+            hitDetectionRadius: this.options.pointHitDetectionRadius,
+            ctx: this.chart.ctx,
+            inRange: function (mouseX) {
+                return (Math.pow(mouseX - this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius, 2));
+            }
+        });
+
+        this.datasets = [];
+
+        //Set up tooltip events on the chart
+        if (this.options.showTooltips) {
+            helpers.bindEvents(this, this.options.tooltipEvents, function (evt) {
+                var activePoints = (evt.type !== 'mouseout') ? this.getPointsAtEvent(evt) : [];
+                this.eachPoints(function (point) {
+                    point.restore(['fillColor', 'strokeColor']);
+                });
+                helpers.each(activePoints, function (activePoint) {
+                    activePoint.fillColor = activePoint.highlightFill;
+                    activePoint.strokeColor = activePoint.highlightStroke;
+                });
+                this.showTooltip(activePoints);
+            });
+        }
+
+        //Iterate through each of the datasets, and build this into a property of the chart
+        helpers.each(data.datasets, function (dataset) {
+            var datasetObject = {
+                label: dataset.label || null,
+                fillColor: dataset.fillColor,
+                strokeColor: dataset.strokeColor,
+                pointColor: dataset.pointColor,
+                pointStrokeColor: dataset.pointStrokeColor,
+                showTooltip: dataset.showTooltip,
+                points: []
+            };
+
+            this.datasets.push(datasetObject);
+
+
+            helpers.each(dataset.data, function (dataPoint, index) {
+                //Add a new point for each piece of data, passing any required data to draw.
+                datasetObject.points.push(new this.PointClass({
+
+                    /*
+                     * set wether to show the tooltip or not, left this as being able to be undfined
+                     * and default to true
+                     */
+                    showTooltip: dataset.showTooltip === undefined ? true : dataset.showTooltip,
+                    value: dataPoint,
+                    label: data.labels[index],
+                    datasetLabel: dataset.label,
+                    strokeColor: dataset.pointStrokeColor,
+                    fillColor: dataset.pointColor,
+                    highlightFill: dataset.pointHighlightFill || dataset.pointColor,
+                    highlightStroke: dataset.pointHighlightStroke || dataset.pointStrokeColor
+                }));
+            }, this);
+
+            this.buildScale(data.labels);
+
+
+            this.eachPoints(function (point, index) {
+                helpers.extend(point, {
+                    x: this.scale.calculateX(index),
+                    y: this.scale.endPoint
+                });
+                point.save();
+            }, this);
+
+        }, this);
+
+
+        this.render();
+    },
+    /*
+     * need to edit how points at event works so it only uses points that we want to show the tool tip for
+     */
+    getPointsAtEvent: function (e) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var pointsArray = [],
+            eventPosition = helpers.getRelativePosition(e);
+        helpers.each(this.datasets, function (dataset) {
+            helpers.each(dataset.points, function (point) {
+                if (point.inRange(eventPosition.x, eventPosition.y) && point.showTooltip) pointsArray.push(point);
+            });
+        }, this);
+        return pointsArray;
+    },
+    /*
+     * also need to change how the core showTooltip functions as otherwise, it trys to be helpful
+     * and grab any points it thinks also need to be displayed
+     */
+    showTooltip: function (ChartElements, forceRedraw) {
+        //have to get the helpers as we are using this outside chart where it was declared
+        var helpers = Chart.helpers;
+        var each = helpers.each;
+        var indexOf = helpers.indexOf;
+        var min = helpers.min;
+        var max = helpers.min;
+        // Only redraw the chart if we've actually changed what we're hovering on.
+        if (typeof this.activeElements === 'undefined') this.activeElements = [];
+
+        var isChanged = (function (Elements) {
+            var changed = false;
+
+            if (Elements.length !== this.activeElements.length) {
+                changed = true;
+                return changed;
+            }
+
+            each(Elements, function (element, index) {
+                if (element !== this.activeElements[index]) {
+                    changed = true;
+                }
+            }, this);
+            return changed;
+        }).call(this, ChartElements);
+
+        if (!isChanged && !forceRedraw) {
+            return;
+        } else {
+            this.activeElements = ChartElements;
+        }
+        this.draw();
+        if (ChartElements.length > 0) {
+            // If we have multiple datasets, show a MultiTooltip for all of the data points at that index
+            if (this.datasets && this.datasets.length > 1) {
+                var dataArray,
+                dataIndex;
+
+                for (var i = this.datasets.length - 1; i >= 0; i--) {
+                    dataArray = this.datasets[i].points || this.datasets[i].bars || this.datasets[i].segments;
+                    dataIndex = indexOf(dataArray, ChartElements[0]);
+                    if (dataIndex !== -1) {
+                        break;
+                    }
+                }
+                var tooltipLabels = [],
+                    tooltipColors = [],
+                    medianPosition = (function (index) {
+
+                        // Get all the points at that particular index
+                        var Elements = [],
+                            dataCollection,
+                            xPositions = [],
+                            yPositions = [],
+                            xMax,
+                            yMax,
+                            xMin,
+                            yMin;
+                        helpers.each(this.datasets, function (dataset) {
+                            dataCollection = dataset.points || dataset.bars || dataset.segments;
+                            /*
+                             *check to make sure we want to show the point
+                             */
+                            if (dataCollection[dataIndex] && dataCollection[dataIndex].hasValue() && (dataCollection[dataIndex].showTooltip === undefined || dataCollection[dataIndex].showTooltip)) {
+                                Elements.push(dataCollection[dataIndex]);
+                            }
+                        });
+
+                        helpers.each(Elements, function (element) {
+                            xPositions.push(element.x);
+                            yPositions.push(element.y);
+
+
+                            //Include any colour information about the element
+                            tooltipLabels.push(helpers.template(this.options.multiTooltipTemplate, element));
+                            tooltipColors.push({
+                                fill: element._saved.fillColor || element.fillColor,
+                                stroke: element._saved.strokeColor || element.strokeColor
+                            });
+
+                        }, this);
+
+                        yMin = min(yPositions);
+                        yMax = max(yPositions);
+
+                        xMin = min(xPositions);
+                        xMax = max(xPositions);
+
+                        return {
+                            x: (xMin > this.chart.width / 2) ? xMin : xMax,
+                            y: (yMin + yMax) / 2
+                        };
+                    }).call(this, dataIndex);
+
+                new Chart.MultiTooltip({
+                    x: medianPosition.x,
+                    y: medianPosition.y,
+                    xPadding: this.options.tooltipXPadding,
+                    yPadding: this.options.tooltipYPadding,
+                    xOffset: this.options.tooltipXOffset,
+                    fillColor: this.options.tooltipFillColor,
+                    textColor: this.options.tooltipFontColor,
+                    fontFamily: this.options.tooltipFontFamily,
+                    fontStyle: this.options.tooltipFontStyle,
+                    fontSize: this.options.tooltipFontSize,
+                    titleTextColor: this.options.tooltipTitleFontColor,
+                    titleFontFamily: this.options.tooltipTitleFontFamily,
+                    titleFontStyle: this.options.tooltipTitleFontStyle,
+                    titleFontSize: this.options.tooltipTitleFontSize,
+                    cornerRadius: this.options.tooltipCornerRadius,
+                    labels: tooltipLabels,
+                    legendColors: tooltipColors,
+                    legendColorBackground: this.options.multiTooltipKeyBackground,
+                    title: ChartElements[0].label,
+                    chart: this.chart,
+                    ctx: this.chart.ctx
+                }).draw();
+
+            } else {
+                each(ChartElements, function (Element) {
+                    var tooltipPosition = Element.tooltipPosition();
+                    new Chart.Tooltip({
+                        x: Math.round(tooltipPosition.x),
+                        y: Math.round(tooltipPosition.y),
+                        xPadding: this.options.tooltipXPadding,
+                        yPadding: this.options.tooltipYPadding,
+                        fillColor: this.options.tooltipFillColor,
+                        textColor: this.options.tooltipFontColor,
+                        fontFamily: this.options.tooltipFontFamily,
+                        fontStyle: this.options.tooltipFontStyle,
+                        fontSize: this.options.tooltipFontSize,
+                        caretHeight: this.options.tooltipCaretSize,
+                        cornerRadius: this.options.tooltipCornerRadius,
+                        text: template(this.options.tooltipTemplate, Element),
+                        chart: this.chart
+                    }).draw();
+                }, this);
+            }
+        }
+        return this;
+    },
+
+});
+var ctx = document.getElementById("info1").getContext("2d");
+var data = {
+    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    datasets: [{
+        label: "My First dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [15, 10, 10, 10, 10, 10, 10]
+    }, {
+        label: "My second dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(220,220,220,0.8)",
+        highlightFill: "rgba(220,220,220,0.75)",
+        highlightStroke: "rgba(220,220,220,1)",
+        showTooltip: false,
+        data: [100, 100, 100, 100, 100, 100, 100]
+    }, {
+        label: "My third dataset",
+        fillColor: "rgb(255,255,255)",
+        strokeColor: "rgba(151,187,205,0.8)",
+        highlightFill: "rgba(151,187,205,0.75)",
+        highlightStroke: "rgba(151,187,205,1)",
+        data: [28, 48, 40, 19, 86, 27, 90]
+    }]
+};
+
+
+var myBarChart = new Chart(ctx).LineTooltip(data);
+</script>
+</div>
+
+
+</body>
+</html>
